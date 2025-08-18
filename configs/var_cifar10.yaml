@@ -1,0 +1,67 @@
+# VAR Scaffold Configuration (Stage 1)
+# For CIFAR-10 (32x32) with next-scale prediction
+
+model:
+  name: "VARTransformer"
+  # Transformer architecture
+  num_layers: 12
+  hidden_dim: 512
+  num_heads: 8
+  mlp_ratio: 4.0
+  dropout: 0.1
+  
+  # Positional encoding
+  use_rotary: true
+  use_alibi: true
+  max_seq_len: 1024
+  
+  # VAR-specific
+  pyramid_levels: [8, 16, 32]
+  codebook_size: 1024  # should match tokenizer
+  code_dim: 8
+  
+  # Teacher forcing
+  teacher_forcing_ratio: 1.0  # start with 1.0, decay to 0.8
+
+training:
+  dataset: "cifar10"
+  batch_size: 32  # smaller due to transformer memory
+  num_epochs: 200
+  learning_rate: 5e-5
+  optimizer: "adamw"
+  weight_decay: 1e-4
+  scheduler: "cosine"
+  warmup_steps: 2000
+  
+  # Scheduled sampling
+  scheduled_sampling:
+    enabled: true
+    start_ratio: 1.0
+    end_ratio: 0.8
+    decay_steps: 50000
+  
+  # Logging
+  log_every: 100
+  save_every: 5000
+  eval_every: 1000
+  
+  # Mixed precision
+  use_fp16: true
+  gradient_clip: 1.0
+  gradient_checkpointing: true
+
+data:
+  image_size: 32
+  num_workers: 4
+  pin_memory: true
+  
+  # Tokenizer checkpoint
+  tokenizer_path: "experiments/tokenizer_cifar10/hierarchical_vqvae_cifar10.pt"
+
+output:
+  save_dir: "experiments/var_cifar10"
+  model_name: "var_transformer_cifar10"
+  
+# Hardware
+device: "cuda"
+seed: 42

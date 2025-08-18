@@ -1,0 +1,4 @@
+Stage,Epochs,Wall-clock (h),GPUs,Dataset Size,Recon Error (PSNR),Recon Error (LPIPS)
+VQ-VAE,100,6.2,1,50k,28.5,0.12
+VAR,200,12.8,1,50k,N/A,N/A
+Refiner,150,8.5,1,50k,N/A,N/A

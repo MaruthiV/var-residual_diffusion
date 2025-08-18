@@ -1,0 +1,57 @@
+# Hierarchical VQ-VAE Tokenizer Configuration (Stage 0)
+# For CIFAR-10 (32x32) with pyramid latents
+
+model:
+  name: "HierarchicalVQVAE"
+  # Pyramid levels: 8² → 16² → 32²
+  pyramid_levels: [8, 16, 32]
+  codebook_size: 1024  # per level
+  code_dim: 8
+  hidden_dim: 128
+  num_res_blocks: 2
+  num_res_channels: 128
+  commitment_cost: 0.25
+  decay: 0.99  # EMA codebook update
+
+training:
+  dataset: "cifar10"
+  batch_size: 64
+  num_epochs: 100
+  learning_rate: 1e-4
+  optimizer: "adam"
+  weight_decay: 1e-6
+  scheduler: "cosine"
+  warmup_steps: 1000
+  
+  # Loss weights
+  recon_loss_weight: 1.0
+  commitment_loss_weight: 0.25
+  perceptual_loss_weight: 0.1
+  
+  # Logging
+  log_every: 100
+  save_every: 5000
+  eval_every: 1000
+  
+  # Mixed precision
+  use_fp16: true
+  gradient_clip: 1.0
+
+data:
+  image_size: 32
+  num_workers: 4
+  pin_memory: true
+  
+  # Augmentations
+  augmentations:
+    horizontal_flip: true
+    color_jitter: 0.1
+    random_crop: false  # CIFAR-10 is already 32x32
+
+output:
+  save_dir: "experiments/tokenizer_cifar10"
+  model_name: "hierarchical_vqvae_cifar10"
+  
+# Hardware
+device: "cuda"
+seed: 42

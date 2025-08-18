@@ -1,0 +1,17 @@
+VAR-Refine Sample Generation Report
+==================================================
+
+Number of samples: 16
+Image size: 32x32
+
+VAR Scaffold Statistics:
+  Mean: 0.5225
+  Std:  0.1114
+
+Refined Output Statistics:
+  Mean: 0.5433
+  Std:  0.1099
+
+Diversity Metrics:
+  VAR Scaffold Diversity: 0.0117
+  Refined Output Diversity: 0.0113

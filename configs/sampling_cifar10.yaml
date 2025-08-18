@@ -1,0 +1,54 @@
+# Sampling Configuration
+# VAR-Refine pipeline for CIFAR-10
+
+sampling:
+  # VAR scaffold parameters
+  var:
+    temperature: 1.0
+    top_k: 100
+    top_p: 0.9
+    use_beam_search: false
+    beam_size: 1
+    
+  # Diffusion refiner parameters
+  refiner:
+    num_steps: 10  # NFE = 5-10 for speed
+    sampler: "heun"  # or "dpm_solver"
+    guidance_scale: 1.0  # for Auto-Guidance
+    
+    # Auto-Guidance
+    auto_guidance:
+      enabled: true
+      alpha: 0.5  # guidance strength
+      use_worse_checkpoint: true
+    
+  # Generation parameters
+  num_samples: 1000
+  batch_size: 16
+  seed: 42
+
+# Model checkpoints
+models:
+  tokenizer_path: "experiments/tokenizer_cifar10/hierarchical_vqvae_cifar10.pt"
+  var_path: "experiments/var_cifar10/var_transformer_cifar10.pt"
+  refiner_path: "experiments/refiner_cifar10/diffusion_refiner_cifar10.pt"
+  
+  # For Auto-Guidance (worse checkpoint)
+  worse_refiner_path: "experiments/refiner_cifar10/diffusion_refiner_cifar10_worse.pt"
+
+# Output
+output:
+  save_dir: "experiments/samples_cifar10"
+  save_format: "png"
+  save_metadata: true
+  
+# Evaluation
+evaluation:
+  compute_fid: true
+  compute_is: true
+  compute_lpips: true
+  reference_dataset: "cifar10"
+  
+# Hardware
+device: "cuda"
+use_fp16: true

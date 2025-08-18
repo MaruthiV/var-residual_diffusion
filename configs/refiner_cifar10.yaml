@@ -1,0 +1,65 @@
+# Diffusion Refiner Configuration (Stage 2)
+# For CIFAR-10 (32x32) with residual prediction
+
+model:
+  name: "DiffusionRefiner"
+  # UNet architecture (tiny)
+  in_channels: 3
+  out_channels: 3
+  model_channels: 128
+  num_res_blocks: 2
+  attention_resolutions: [16]
+  dropout: 0.1
+  channel_mult: [1, 2, 4]
+  num_heads: 4
+  
+  # Conditioning
+  condition_on_var: true
+  condition_on_class: true
+  num_classes: 10  # CIFAR-10
+  
+  # Diffusion parameters
+  noise_schedule: "linear"
+  num_timesteps: 1000
+  beta_start: 1e-4
+  beta_end: 0.02
+
+training:
+  dataset: "cifar10"
+  batch_size: 64
+  num_epochs: 100
+  learning_rate: 1e-4
+  optimizer: "adamw"
+  weight_decay: 1e-6
+  scheduler: "cosine"
+  warmup_steps: 1000
+  
+  # Loss
+  loss_type: "eps"  # epsilon prediction
+  residual_target: true  # predict residual r = x* - x̂_VAR
+  
+  # Logging
+  log_every: 100
+  save_every: 5000
+  eval_every: 1000
+  
+  # Mixed precision
+  use_fp16: true
+  gradient_clip: 1.0
+
+data:
+  image_size: 32
+  num_workers: 4
+  pin_memory: true
+  
+  # Model checkpoints
+  tokenizer_path: "experiments/tokenizer_cifar10/hierarchical_vqvae_cifar10.pt"
+  var_path: "experiments/var_cifar10/var_transformer_cifar10.pt"
+
+output:
+  save_dir: "experiments/refiner_cifar10"
+  model_name: "diffusion_refiner_cifar10"
+  
+# Hardware
+device: "cuda"
+seed: 42
